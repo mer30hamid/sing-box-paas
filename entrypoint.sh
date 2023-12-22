@@ -3,15 +3,15 @@ apt-get update && apt-get install -y wget #net-tools
 nx=$(tr -dc 'A-Za-z0-9' </dev/urandom | head -c 4)
 xpid=$(tr -dc 'A-Za-z0-9' </dev/urandom | head -c 8)
 
-if [[ ! -n "$ver" ]]; then
-  ver=$(curl -Ls "https://api.github.com/repos/SagerNet/sing-box/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+if [[ ! -n "$VER" ]]; then
+  VER=$(curl -Ls "https://api.github.com/repos/SagerNet/sing-box/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
 fi
 
-wget -O $nx.tar.gz https://github.com/SagerNet/sing-box/releases/download/v${ver}/sing-box-${ver}-linux-amd64.tar.gz
+wget -O $nx.tar.gz https://github.com/SagerNet/sing-box/releases/download/v${VER}/sing-box-${VER}-linux-amd64.tar.gz
 
 tar -xvf $nx.tar.gz && rm -f $nx.tar.gz
-chmod a+x sing-box-${ver}-linux-amd64/sing-box && mv sing-box-${ver}-linux-amd64/sing-box $xpid
-rm -rf sing-box-${ver}-linux-amd64
+chmod a+x sing-box-${VER}-linux-amd64/sing-box && mv sing-box-${VER}-linux-amd64/sing-box $xpid
+rm -rf sing-box-${VER}-linux-amd64
 
 wget -N https://github.com/SagerNet/sing-geoip/releases/latest/download/geoip.db
 wget -N https://github.com/SagerNet/sing-geosite/releases/latest/download/geosite.db
