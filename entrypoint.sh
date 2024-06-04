@@ -1,7 +1,11 @@
 #!/bin/bash
-apt-get update && apt-get install -y wget #net-tools
+cd $S3_MOUNT_DIRECTORY
+mkdir -p $S3_MOUNT_DIRECTORY/nginx/conf.d
+ln -s /mnt/s3_bucket/nginx/conf.d /var/nginx
+# apt-get update && apt-get install -y wget #net-tools
 nx=$(tr -dc 'A-Za-z0-9' </dev/urandom | head -c 4)
 xpid=$(tr -dc 'A-Za-z0-9' </dev/urandom | head -c 8)
+NGINX_DEFAULT_CONF="$S3_MOUNT_DIRECTORY/nginx/conf.d/default.conf"
 
 if [[ ! -n "$VER" ]]; then
   VER=$(curl -Ls "https://api.github.com/repos/SagerNet/sing-box/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
@@ -17,7 +21,7 @@ wget -N https://github.com/SagerNet/sing-geoip/releases/latest/download/geoip.db
 wget -N https://github.com/SagerNet/sing-geosite/releases/latest/download/geosite.db
 
 cp ./config.template.json ./config.json
-cp /etc/nginx/nginx.template.conf /etc/nginx/nginx.conf
+cp /etc/nginx/nginx.template.conf $NGINX_DEFAULT_CONF
 
 if [[ ! -n "$WARPKEY" ]]; then
   WARPKEY="WARPKEY"
@@ -35,7 +39,7 @@ sed -i "s/UUID/$UUID/g" ./config.json
 sed -i "s/WARPKEY/$WARPKEY/g" ./config.json
 sed -i "s/WARPSERVER/$WARPSERVER/g" ./config.json
 sed -i "s/WARPPORT/$WARPPORT/g" ./config.json
-sed -i "s/UUID/$UUID/g" /etc/nginx/nginx.conf
+sed -i "s/UUID/$UUID/g" $NGINX_DEFAULT_CONF
 
 # cat config.json | base64 > config
 # rm -f config.json
