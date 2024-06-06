@@ -1,0 +1,2 @@
+del .\ok.zip
+"%programfiles%\7-Zip\7z.exe" a -tzip -xr!.github -xr!.git -xr!docker-s3-bucket-master -xr!sing-box-templates-main -xr!README.md -xr!LICENSE -xr!envs.txt -xr!zipMe.cmd -xr!.gitignore ok.zip .

@@ -1,32 +1,32 @@
-FROM nginx:latest
+FROM nginx:alpine-slim
 LABEL just for liara
 EXPOSE 80
 USER root
-COPY entrypoint.sh ./
-ARG LIARA_ACCESS_KEY=$LIARA_ACCESS_KEY
-ENV LIARA_ACCESS_KEY=$LIARA_ACCESS_KEY
-ARG LIARA_SECRET_ACCESS_KEY=$LIARA_ACCESS_KEY
-ENV LIARA_SECRET_ACCESS_KEY=$LIARA_SECRET_ACCESS_KEY
-ARG S3_MOUNT_DIRECTORY=/mnt/s3_bucket
-ENV S3_MOUNT_DIRECTORY=$S3_MOUNT_DIRECTORY
-ARG S3_BUCKET_NAME=$S3_BUCKET_NAME 
-ENV S3_BUCKET_NAME=$S3_BUCKET_NAME
-RUN apt-get update -y && \
-    apt install -y s3fs wget && \
-    echo $LIARA_ACCESS_KEY:$LIARA_SECRET_ACCESS_KEY > /root/.passwd-s3fs && \
-    chmod 600 /root/.passwd-s3fs && \
-    mkdir $S3_MOUNT_DIRECTORY && \
-    echo "$S3_BUCKET_NAME $S3_MOUNT_DIRECTORY fuse.s3fs _netdev,allow_other,use_path_request_style,url=https://storage.iran.liara.space 0 0" > etc/fstab && \
-    mkdir -p /usr/share/nginx/html && \
-    adduser -u 82 -D -S -G www-data www-data && \
-    chown -R www-data.www-data /usr/share/nginx/html && \
-    chmod -R 755 /usr/share/nginx/html && \
-    rm -rf /var/nginx/conf.d && \
-    chmod a+x ./entrypoint.sh
-WORKDIR $S3_MOUNT_DIRECTORY
+COPY entrypoint.sh /
+COPY config.template.json /config.template.json
+COPY nginx.template.conf /
+
 ENV UUID ea4909ef-7ca6-4b46-bf2e-6c07896ef338
-# ENV VER 1.3-beta11
-COPY nginx.template.conf /etc/nginx/nginx.template.conf
-COPY config.template.json ./
+ENV VER 1.9.0
+# XPID=$(tr -dc 'A-Za-z0-9' </dev/urandom | head -c 8)
+ENV XPID ksfhwke
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.pardisco.co/g' /etc/apk/repositories && \
+    apk update && \
+    apk add curl wget bash --no-cache && \
+    mkdir -p /usr/share/nginx/html && \
+    nx=$(tr -dc 'A-Za-z0-9' </dev/urandom | head -c 4) && \
+    wget -O $nx.tar.gz https://github.com/SagerNet/sing-box/releases/download/v${VER}/sing-box-${VER}-linux-amd64.tar.gz && \
+    tar -xvf $nx.tar.gz && rm -f $nx.tar.gz && \
+    chmod a+x sing-box-${VER}-linux-amd64/sing-box && mv sing-box-${VER}-linux-amd64/sing-box $XPID && \
+    rm -rf sing-box-${VER}-linux-amd64 && \
+    wget -N https://github.com/SagerNet/sing-geoip/releases/latest/download/geoip.db && \
+    wget -N https://github.com/SagerNet/sing-geosite/releases/latest/download/geosite.db && \
+    echo "include /tmp/nginx/conf.d/*.conf;" > /etc/nginx/conf.d/default.conf && \
+    chmod a+x ./entrypoint.sh
+
 COPY index.html /usr/share/nginx/html/
+
+# ENTRYPOINT ["/bin/sh", "-c" , "mkdir -p /tmp/nginx/client_temp /tmp/cache/nginx /tmp/nginx/fastcgi_cache /tmp/nginx/fastcgi_temp /tmp/cache/nginx/uwsgi_temp /tmp/cache/nginx/scgi_temp /tmp/nginx/scgi_temp && nginx && ./$XPID run -c config.json && cat log"]
+# ENTRYPOINT ["/bin/sh", "-c" , "mkdir -p /tmp/nginx/client_temp /tmp/cache/nginx /tmp/nginx/fastcgi_cache /tmp/nginx/fastcgi_temp /tmp/cache/nginx/uwsgi_temp /tmp/cache/nginx/scgi_temp /tmp/nginx/scgi_temp && ping 8.8.8.8"]
+# ENTRYPOINT ["/bin/sh", "-c" , "ping 8.8.8.8"]
 ENTRYPOINT [ "./entrypoint.sh" ]
