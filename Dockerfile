@@ -6,14 +6,14 @@ COPY entrypoint.sh /
 COPY config.template.json /config.template.json
 COPY nginx.template.conf /
 
-ENV UUID ea4909ef-7ca6-4b46-bf2e-6c07896ef338
 ENV VER 1.9.0
 # XPID=$(tr -dc 'A-Za-z0-9' </dev/urandom | head -c 8)
 ENV XPID ksfhwke
-RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.pardisco.co/g' /etc/apk/repositories && \
+RUN mkdir -p /usr/share/nginx/html && \
+    # sed -i 's/dl-cdn.alpinelinux.org/mirrors.pardisco.co/g' /etc/apk/repositories && \ # only for Iran
     apk update && \
     apk add curl wget bash --no-cache && \
-    mkdir -p /usr/share/nginx/html && \
+    
     nx=$(tr -dc 'A-Za-z0-9' </dev/urandom | head -c 4) && \
     wget -O $nx.tar.gz https://github.com/SagerNet/sing-box/releases/download/v${VER}/sing-box-${VER}-linux-amd64.tar.gz && \
     tar -xvf $nx.tar.gz && rm -f $nx.tar.gz && \
