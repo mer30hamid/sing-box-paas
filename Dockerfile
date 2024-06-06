@@ -10,7 +10,7 @@ ENV VER 1.9.0
 # XPID=$(tr -dc 'A-Za-z0-9' </dev/urandom | head -c 8)
 ENV XPID ksfhwke
 RUN mkdir -p /usr/share/nginx/html && \
-    # sed -i 's/dl-cdn.alpinelinux.org/mirrors.pardisco.co/g' /etc/apk/repositories && \ # only for Iran
+    sed -i 's/dl-cdn.alpinelinux.org/mirrors.pardisco.co/g' /etc/apk/repositories && \
     apk update && \
     apk add curl wget bash --no-cache && \
     
