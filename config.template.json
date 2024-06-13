@@ -6,7 +6,7 @@
 		"servers" : [
             {
                 "tag": "dns_proxy",
-                "address": "https://dns.nas-server.ru/dns-query",
+                "address": "DOH_ADDRESS",
                 "address_resolver": "dns_resolver",
                 "strategy": "ipv4_only",
                 "detour": "direct"
@@ -23,7 +23,7 @@
 	"inbounds" : [
 		{
 			"type" : "trojan",
-			"tag" : "trojan-in",
+			"tag" : "trojan",
 			"listen" : "127.0.0.1",
 			"listen_port" : 30000,
 			"sniff" : true,
@@ -43,14 +43,14 @@
 		},
 		{
 			"type" : "vless",
-			"tag" : "vless-in",
+			"tag" : "vless",
 			"listen" : "127.0.0.1",
 			"listen_port" : 20000,
 			"sniff" : true,
 			"sniff_override_destination" : true,
 			"users" : [
 				{
-					"name" : "sekai",
+					"name" : "abbas",
 					"uuid" : "UUID",
 					"flow" : ""
 				}
@@ -65,14 +65,14 @@
 		},
 		{
 			"type" : "vmess",
-			"tag" : "vmess-in",
+			"tag" : "vmess",
 			"listen" : "127.0.0.1",
 			"listen_port" : 10000,
 			"sniff" : true,
 			"sniff_override_destination" : true,
 			"users" : [
 				{
-					"name" : "sekai",
+					"name" : "abbas",
 					"uuid" : "UUID"
 				}
 			],
@@ -86,7 +86,7 @@
 		},
 		{
 			"type" : "trojan",
-			"tag" : "trojan-in-warp",
+			"tag" : "trojan-warp",
 			"listen" : "127.0.0.1",
 			"listen_port" : 30001,
 			"sniff" : true,
@@ -106,14 +106,14 @@
 		},
 		{
 			"type" : "vless",
-			"tag" : "vless-in-warp",
+			"tag" : "vless-warp",
 			"listen" : "127.0.0.1",
 			"listen_port" : 20001,
 			"sniff" : true,
 			"sniff_override_destination" : true,
 			"users" : [
 				{
-					"name" : "sekai",
+					"name" : "abbas",
 					"uuid" : "UUID",
 					"flow" : ""
 				}
@@ -128,14 +128,14 @@
 		},
 		{
 			"type" : "vmess",
-			"tag" : "vmess-in-warp",
+			"tag" : "vmess-warp",
 			"listen" : "127.0.0.1",
 			"listen_port" : 10001,
 			"sniff" : true,
 			"sniff_override_destination" : true,
 			"users" : [
 				{
-					"name" : "sekai",
+					"name" : "abbas",
 					"uuid" : "UUID"
 				}
 			],
@@ -144,6 +144,69 @@
 			},
 			"transport" : {
 				"path" : "/UUID-vm/warp",
+				"type" : "ws"
+			}
+		},
+		{
+			"type" : "trojan",
+			"tag" : "trojan-proxy",
+			"listen" : "127.0.0.1",
+			"listen_port" : 30002,
+			"sniff" : true,
+			"sniff_override_destination" : true,
+			"users" : [
+				{
+					"password" : "UUID"
+				}
+			],
+			"tls" : {
+				"enabled" : false
+			},
+			"transport" : {
+				"path" : "/UUID-tr/proxy",
+				"type" : "ws"
+			}
+		},
+		{
+			"type" : "vless",
+			"tag" : "vless-proxy",
+			"listen" : "127.0.0.1",
+			"listen_port" : 20002,
+			"sniff" : true,
+			"sniff_override_destination" : true,
+			"users" : [
+				{
+					"name" : "abbas",
+					"uuid" : "UUID",
+					"flow" : ""
+				}
+			],
+			"tls" : {
+				"enabled" : false
+			},
+			"transport" : {
+				"path" : "/UUID-vl/proxy",
+				"type" : "ws"
+			}
+		},
+		{
+			"type" : "vmess",
+			"tag" : "vmess-proxy",
+			"listen" : "127.0.0.1",
+			"listen_port" : 10002,
+			"sniff" : true,
+			"sniff_override_destination" : true,
+			"users" : [
+				{
+					"name" : "abbas",
+					"uuid" : "UUID"
+				}
+			],
+			"tls" : {
+				"enabled" : false
+			},
+			"transport" : {
+				"path" : "/UUID-vm/proxy",
 				"type" : "ws"
 			}
 		}
@@ -175,7 +238,7 @@
 			"peer_public_key" : "bmXOC+F1FxEMF9dyiK2H5/1SUtzH0JuVo51h2wPfgyo=",
 			"mtu" : 1280,
 			"tcp_fast_open" : true
-		}
+		}XXXOUTBOUNDXXX
 	],
 	"route" : {
 		"auto_detect_interface" : false,
@@ -228,12 +291,16 @@
 				"outbound" : "block"
 			},
 			{
-				"inbound" : [ "vmess-in-warp", "vless-in-warp", "trojan-in-warp" ],
+				"inbound" : [ "vmess", "vless", "trojan" ],
+				"outbound" : "direct"
+			},
+            {
+				"inbound" : [ "vmess-warp", "vless-warp", "trojan-warp" ],
 				"outbound" : "warp-out"
 			},
-			{
-				"inbound" : [ "vmess-in", "vless-in", "trojan-in" ],
-				"outbound" : "direct"
+            {
+				"inbound" : [ "vmess-proxy", "vless-proxy", "trojan-proxy" ],
+				"outbound" : "proxy"
 			}
 		]
 	}

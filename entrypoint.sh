@@ -8,6 +8,7 @@ cp ./nginx.template.conf $NGINX_DEFAULT_CONF
 
 if [[ ! -n "$WARPKEY" ]]; then
   WARPKEY="WARPKEY"
+  sed -i 's/"outbound" : "warp-out"/"outbound" : "block"/' /tmp/config.json
 fi
 
 if [[ ! -n "$WARPSERVER" ]]; then
@@ -17,10 +18,24 @@ fi
 if [[ ! -n "$WARPPORT" ]]; then
   WARPPORT="2408"
 fi
+
+if [[ ! -n "$DOH_ADDRESS" ]]; then
+  DOH_ADDRESS="https://9.9.9.9/dns-query"
+fi
+
+if [[ ! -n "$OUTBOUND" ]]; then
+  sed -i "s~XXXOUTBOUNDXXX~~g" /tmp/config.json
+  sed -i 's/"outbound" : "proxy"/"outbound" : "block"/' /tmp/config.json
+else
+  OUTBOUND=$(echo $OUTBOUND)
+  sed -i "s~XXXOUTBOUNDXXX~,\n${OUTBOUND}~g" /tmp/config.json
+fi
+
 sed -i "s/UUID/$UUID/g" /tmp/config.json
 sed -i "s~WARPKEY~$WARPKEY~g" /tmp/config.json
 sed -i "s/WARPSERVER/$WARPSERVER/g" /tmp/config.json
 sed -i "s/WARPPORT/$WARPPORT/g" /tmp/config.json
+sed -i "s~DOH_ADDRESS~$DOH_ADDRESS~g" /tmp/config.json
 sed -i "s/UUID/$UUID/g" $NGINX_DEFAULT_CONF
 
 if [[ ! -n "$JDOMAIN" ]]; then
@@ -49,15 +64,15 @@ trojan="trojan://${UUID}@${JDOMAIN}:443?security=tls&type=ws&host=${JDOMAIN}&pat
 cat >> /tmp/log << EOF
 Normal configs:
 ----------------------------------------------------------------
-1：Vmess+ws+tls
+Vmess+ws+tls
 ${vmess}
 
 ----------------------------------------------------------------
-2：Vless+ws+tls
+Vless+ws+tls
 ${vless}
 
 ----------------------------------------------------------------
-3：Trojan+ws+tls
+Trojan+ws+tls
 ${trojan}
 
 ----------------------------------------------------------------
@@ -86,7 +101,7 @@ trojan_warp="trojan://${UUID}@${JDOMAIN}:443?security=tls&type=ws&host=${JDOMAIN
 cat >> /tmp/log << EOF
 WARP OUT configs:
 ----------------------------------------------------------------
-4：Vmess+ws+tls+warp
+Vmess+ws+tls+warp
 ${vmess_warp}
 
 ----------------------------------------------------------------
@@ -94,8 +109,46 @@ ${vmess_warp}
 ${vless_warp}
 
 ----------------------------------------------------------------
-6：Trojan+ws+tls+warp
+Trojan+ws+tls+warp
 ${trojan_warp}
+
+----------------------------------------------------------------
+EOF
+fi
+
+if [[ ! -z "$OUTBOUND" ]]; then
+vmess_proxy="vmess://$(echo -n "\
+{\
+\"v\": \"2\",\
+\"ps\": \"vmess_${JDOMAIN}_proxy\",\
+\"add\": \"${JDOMAIN}\",\
+\"port\": \"443\",\
+\"id\": \"$UUID\",\
+\"aid\": \"0\",\
+\"net\": \"ws\",\
+\"type\": \"none\",\
+\"host\": \"${JDOMAIN}\",\
+\"path\": \"/$UUID-vm/proxy\",\
+\"tls\": \"tls\",\
+\"sni\": \"${JDOMAIN}\"\
+}"\
+    | base64 -w 0)" 
+vless_proxy="vless://${UUID}@${JDOMAIN}:443?encryption=none&security=tls&sni=$JDOMAIN&type=ws&host=${JDOMAIN}&path=/$UUID-vl/proxy#vless-${JDOMAIN}_proxy"
+trojan_proxy="trojan://${UUID}@${JDOMAIN}:443?security=tls&type=ws&host=${JDOMAIN}&path=/$UUID-tr/proxy&sni=$JDOMAIN#trojan-${JDOMAIN}_proxy"
+
+cat >> /tmp/log << EOF
+proxy OUT configs:
+----------------------------------------------------------------
+Vmess+ws+tls+proxy
+${vmess_proxy}
+
+----------------------------------------------------------------
+Vless+ws+tls+proxy
+${vless_proxy}
+
+----------------------------------------------------------------
+Trojan+ws+tls+proxy
+${trojan_proxy}
 
 ----------------------------------------------------------------
 EOF
