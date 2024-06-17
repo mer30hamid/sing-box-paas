@@ -6,7 +6,7 @@ COPY entrypoint.sh /
 COPY config.template.json /config.template.json
 COPY nginx.template.conf /
 
-ENV VER 1.9.0
+ENV VER 1.9.3
 # XPID=$(tr -dc 'A-Za-z0-9' </dev/urandom | head -c 8)
 ENV XPID ksfhwke
 RUN mkdir -p /usr/share/nginx/html && \
