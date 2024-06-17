@@ -2,8 +2,9 @@ Sing-Box + NGINX
 ----------------
 
 Variables:
- * VER = sing-box version
- * UUID = UUID (for example use an online UUID generator)
- * JDOMAIN = Joined DOMAIN (optional for config generation)
+ * UUID = UUID - for example use an online UUID generator (mandatory)
+ * VER = sing-box version (optional)
+ * JDOMAIN = Joined DOMAIN for config generation (optional)
+ * DOH_ADDRESS = DNS over HTTPS or "DOH" Address (otional)
 
-use `cat log` to print configs.
+use `cat /tmp/log` to print configs.

@@ -1,16 +1,18 @@
-FROM nginx:latest
-LABEL ifeng carmen mack-a ygkkk
+FROM nginx:alpine-slim
+LABEL slim nginx
 EXPOSE 80
 USER root
-ENV UUID ea4909ef-7ca6-4b46-bf2e-6c07896ef338
-# ENV VER 1.3-beta11
-COPY nginx.template.conf /etc/nginx/nginx.template.conf
-COPY config.template.json ./
-RUN mkdir -p /usr/share/nginx/html; \
- adduser -u 82 -D -S -G www-data www-data; \
- chown -R www-data.www-data /usr/share/nginx/html; \
- chmod -R 755 /usr/share/nginx/html
+COPY entrypoint.sh /
+COPY config.template.json /config.template.json
+COPY nginx.template.conf /
+RUN mkdir -p /usr/share/nginx/html && \
+    apk update && \
+    apk add curl wget bash --no-cache && \
+    echo "include /tmp/nginx/conf.d/*.conf;" > /etc/nginx/conf.d/default.conf && \
+    chmod a+x ./entrypoint.sh
 COPY index.html /usr/share/nginx/html/
-COPY entrypoint.sh ./
-RUN chmod a+x ./entrypoint.sh
+
+# ENTRYPOINT ["/bin/sh", "-c" , "mkdir -p /tmp/nginx/client_temp /tmp/cache/nginx /tmp/nginx/fastcgi_cache /tmp/nginx/fastcgi_temp /tmp/cache/nginx/uwsgi_temp /tmp/cache/nginx/scgi_temp /tmp/nginx/scgi_temp && nginx && ./$XPID run -c config.json && cat log"]
+# ENTRYPOINT ["/bin/sh", "-c" , "mkdir -p /tmp/nginx/client_temp /tmp/cache/nginx /tmp/nginx/fastcgi_cache /tmp/nginx/fastcgi_temp /tmp/cache/nginx/uwsgi_temp /tmp/cache/nginx/scgi_temp /tmp/nginx/scgi_temp && ping 8.8.8.8"]
+# ENTRYPOINT ["/bin/sh", "-c" , "ping 8.8.8.8"]
 ENTRYPOINT [ "./entrypoint.sh" ]
