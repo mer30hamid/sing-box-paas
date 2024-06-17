@@ -150,8 +150,7 @@
 	},
 	"experimental" : {
 		"cache_file" : {
-			"enabled" : true,
-            "path": "/tmp/singbox_cache.db"
+			"enabled" : true
 		}
 	}
 }
