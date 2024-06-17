@@ -1,22 +1,22 @@
 {
 	"log" : {
-		"level" : "info"
+		"level" : "warn"
 	},
 	"dns" : {
 		"servers" : [
-            {
-                "tag": "dns_proxy",
-                "address": "DOH_ADDRESS",
-                "address_resolver": "dns_resolver",
-                "strategy": "ipv4_only",
-                "detour": "direct"
-            },
-            {
-                "tag": "dns_resolver",
-                "address": "223.5.5.5",
-                "strategy": "ipv4_only",
-                "detour": "direct"
-            }
+			{
+				"tag" : "dns_proxy",
+				"address" : "DOH_ADDRESS",
+				"address_resolver" : "dns_resolver",
+				"strategy" : "ipv4_only",
+				"detour" : "direct"
+			},
+			{
+				"tag" : "dns_resolver",
+				"address" : "223.5.5.5",
+				"strategy" : "ipv4_only",
+				"detour" : "direct"
+			}
 		],
 		"strategy" : "prefer_ipv4"
 	},
@@ -242,66 +242,61 @@
 	],
 	"route" : {
 		"auto_detect_interface" : false,
-		"geoip" : {
-			"path" : "/geoip.db"
-		},
-		"geosite" : {
-			"path" : "/geosite.db"
-		},
 		"rules" : [
 			{
-				"outbound" : "dns-out",
-				"protocol" : "dns"
+				"protocol" : "dns",
+                "outbound" : "dns-out"
 			},
 			{
-				"network" : "udp",
-				"outbound" : "block",
-				"port" : [ 135, 137, 138, 139, 5353 ]
+				"ip_is_private" : true,
+				"outbound" : "direct"
 			},
 			{
-				"ip_cidr" : [ "224.0.0.0/3", "ff00::/8" ],
-				"outbound" : "block"
+				"rule_set" : "geoip-ir",
+				"outbound" : "direct"
 			},
-			{
-				"outbound" : "block",
-				"source_ip_cidr" : [ "224.0.0.0/3", "ff00::/8" ]
-			},
-			{
-				"geoip" : [ "cn", "ir", "private" ],
-				"outbound" : "block"
-			},
-			{
-				"ip_cidr" : [
-					"0.0.0.0/8",
-					"10.0.0.0/8",
-					"100.64.0.0/10",
-					"127.0.0.0/8",
-					"169.254.0.0/16",
-					"172.16.0.0/12",
-					"192.0.0.0/24",
-					"192.0.2.0/24",
-					"192.168.0.0/16",
-					"198.18.0.0/15",
-					"198.51.100.0/24",
-					"203.0.113.0/24",
-					"::1/128",
-					"fc00::/7",
-					"fe80::/10"
-				],
-				"outbound" : "block"
-			},
+            {
+                "rule_set": "geosite-ir",
+                "outbound": "direct"
+            },
+            {
+                "domain_suffix": ".ir",
+                "outbound": "direct"
+            },
 			{
 				"inbound" : [ "vmess", "vless", "trojan" ],
 				"outbound" : "direct"
 			},
-            {
+			{
 				"inbound" : [ "vmess-warp", "vless-warp", "trojan-warp" ],
 				"outbound" : "warp-out"
 			},
-            {
+			{
 				"inbound" : [ "vmess-proxy", "vless-proxy", "trojan-proxy" ],
 				"outbound" : "proxy"
 			}
+		],
+		"rule_set" : [
+			{
+				"tag" : "geoip-ir",
+				"type" : "remote",
+				"format" : "binary",
+				"url" : "https://raw.githubusercontent.com/SagerNet/sing-geoip/rule-set/geoip-ir.srs",
+				"download_detour" : "proxy"
+			},
+            {
+                "tag": "geosite-ir",
+                "type": "remote",
+                "format": "binary",
+                "url": "https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-category-ir.srs",
+                "download_detour": "proxy"
+            }
 		]
+	},
+	"experimental" : {
+		"cache_file" : {
+			"enabled" : true,
+            "path": "/tmp/singbox_cache.db"
+		}
 	}
 }

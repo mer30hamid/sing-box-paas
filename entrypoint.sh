@@ -7,7 +7,7 @@ cp ./config.template.json /tmp/config.json
 cp ./nginx.template.conf $NGINX_DEFAULT_CONF
 
 if [[ ! -n "$WARPKEY" ]]; then
-  WARPKEY="WARPKEY"
+  WARPKEY="bmXOC+F1FxEMF9dyiK2H5/1SUtzH0JuVo51h2wPfgyo="
   sed -i 's/"outbound" : "warp-out"/"outbound" : "block"/' /tmp/config.json
 fi
 
@@ -78,7 +78,7 @@ ${trojan}
 ----------------------------------------------------------------
 EOF
 
-if [[ "$WARPKEY" != "WARPKEY" ]]; then
+if [[ "$WARPKEY" != "bmXOC+F1FxEMF9dyiK2H5/1SUtzH0JuVo51h2wPfgyo=" ]]; then
 vmess_warp="vmess://$(echo -n "\
 {\
 \"v\": \"2\",\
