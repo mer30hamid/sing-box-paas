@@ -10,7 +10,7 @@ ENV VER 1.9.3
 # XPID=$(tr -dc 'A-Za-z0-9' </dev/urandom | head -c 8)
 ENV XPID ksfhwke
 RUN mkdir -p /usr/share/nginx/html && \
-    sed -i 's/dl-cdn.alpinelinux.org/mirrors.pardisco.co/g' /etc/apk/repositories && \
+    # sed -i 's/dl-cdn.alpinelinux.org/mirrors.pardisco.co/g' /etc/apk/repositories && \
     apk update && \
     apk add curl wget bash --no-cache && \
     
@@ -29,4 +29,4 @@ COPY index.html /usr/share/nginx/html/
 # ENTRYPOINT ["/bin/sh", "-c" , "mkdir -p /tmp/nginx/client_temp /tmp/cache/nginx /tmp/nginx/fastcgi_cache /tmp/nginx/fastcgi_temp /tmp/cache/nginx/uwsgi_temp /tmp/cache/nginx/scgi_temp /tmp/nginx/scgi_temp && nginx && ./$XPID run -c config.json && cat log"]
 # ENTRYPOINT ["/bin/sh", "-c" , "mkdir -p /tmp/nginx/client_temp /tmp/cache/nginx /tmp/nginx/fastcgi_cache /tmp/nginx/fastcgi_temp /tmp/cache/nginx/uwsgi_temp /tmp/cache/nginx/scgi_temp /tmp/nginx/scgi_temp && ping 8.8.8.8"]
 # ENTRYPOINT ["/bin/sh", "-c" , "ping 8.8.8.8"]
-ENTRYPOINT [ "./entrypoint.sh" ]
+ENTRYPOINT [ "/entrypoint.sh" ]
