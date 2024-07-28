@@ -2,7 +2,7 @@
 NGINX_DEFAULT_CONF="/etc/nginx/conf.d/default.conf"
 
 if [[ ! -n "$VER" ]]; then
-  VER=$(curl -Ls "https://api.github.com/repos/SagerNet/sing-box/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+  VER=$(curl -Ls "https://api.github.com/repos/SagerNet/sing-box/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/') && VER=${VER:1}
 fi
 
 XPID=$(tr -dc 'A-Za-z0-9' </dev/urandom | head -c 8)
