@@ -7,4 +7,4 @@ Variables:
  * JDOMAIN = Joined DOMAIN for config generation (optional)
  * DOH_ADDRESS = DNS over HTTPS or "DOH" Address (otional)
 
-use `cat /tmp/log` to print configs.
+use `cat log` to print configs.
