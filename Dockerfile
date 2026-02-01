@@ -1,7 +1,7 @@
-FROM nginx:alpine-slim
+FROM docker.io/nginx:alpine-slim
 LABEL slim nginx
 EXPOSE 8080
-USER root
+# USER root
 COPY entrypoint.sh /
 COPY config.template.json /config.template.json
 COPY nginx.template.conf /
