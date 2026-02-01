@@ -1,6 +1,6 @@
 FROM nginx:alpine-slim
 LABEL slim nginx
-EXPOSE 80
+EXPOSE 8080
 USER root
 COPY entrypoint.sh /
 COPY config.template.json /config.template.json
