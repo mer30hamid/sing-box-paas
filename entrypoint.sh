@@ -7,7 +7,8 @@ fi
 
 XPID=$(tr -dc 'A-Za-z0-9' </dev/urandom | head -c 8)
 nx=$(tr -dc 'A-Za-z0-9' </dev/urandom | head -c 4)
-wget -O $nx.tar.gz https://github.com/SagerNet/sing-box/releases/download/v${VER}/sing-box-${VER}-linux-amd64.tar.gz
+# wget -O $nx.tar.gz https://github.com/SagerNet/sing-box/releases/download/v${VER}/sing-box-${VER}-linux-amd64.tar.gz
+wget -O $nx.tar.gz https://140.82.112.3/SagerNet/sing-box/releases/download/v${VER}/sing-box-${VER}-linux-amd64.tar.gz --no-check-certificate
 tar -xvf $nx.tar.gz && rm -f $nx.tar.gz
 chmod a+x sing-box-${VER}-linux-amd64/sing-box && mv sing-box-${VER}-linux-amd64/sing-box $XPID
 rm -rf sing-box-${VER}-linux-amd64
