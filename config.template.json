@@ -99,7 +99,7 @@
             }
         },
         {
-            "type": "vless",
+            "type": "anytls",
             "tag": "anytls",
             "listen": "127.0.0.1",
             "listen_port": 40000,
@@ -108,24 +108,16 @@
             "users": [
                 {
                     "name": "abbas",
-                    "uuid": "UUID",
-                    "flow": ""
+                    "password": "UUID"
                 }
             ],
             "tls": {
                 "enabled": true,
                 "server_name": "JDOMAIN",
-                "reality": {
-                    "enabled": true,
-                    "handshake": {
-                        "server": "www.google.com",
-                        "server_port": 443
-                    },
-                    "private_key": "PRIVATE_KEY",
-                    "short_id": [
-                        "SHORT_ID"
-                    ]
-                }
+                "alpn": [
+                    "h2",
+                    "http/1.1"
+                ]
             }
         }
     ],
