@@ -22,13 +22,21 @@ if [[ ! -n "$DOH_ADDRESS" ]]; then
   DOH_ADDRESS="https://9.9.9.9/dns-query"
 fi
 
-sed -i "s/UUID/$UUID/g" config.json
-sed -i "s~DOH_ADDRESS~$DOH_ADDRESS~g" config.json
-sed -i "s/UUID/$UUID/g" $NGINX_DEFAULT_CONF
+KEYS=$(./$XPID generate reality-keypair)
+PRIVATE_KEY=$(echo "$KEYS" | grep "PrivateKey" | awk '{print $2}')
+PUBLIC_KEY=$(echo "$KEYS" | grep "PublicKey" | awk '{print $2}')
+SHORT_ID=$(openssl rand -hex 8)
 
 if [[ ! -n "$JDOMAIN" ]]; then
   JDOMAIN=$(curl -s4m6 ip.sb -k)
 fi
+
+sed -i "s/UUID/$UUID/g" config.json
+sed -i "s~DOH_ADDRESS~$DOH_ADDRESS~g" config.json
+sed -i "s/PRIVATE_KEY/$PRIVATE_KEY/g" config.json
+sed -i "s/SHORT_ID/$SHORT_ID/g" config.json
+sed -i "s/JDOMAIN/$JDOMAIN/g" config.json
+sed -i "s/UUID/$UUID/g" $NGINX_DEFAULT_CONF
 
 vmess="vmess://$(echo -n "\
 {\
@@ -48,6 +56,7 @@ vmess="vmess://$(echo -n "\
     | base64 -w 0)" 
 vless="vless://${UUID}@${JDOMAIN}:443?encryption=none&security=tls&sni=$JDOMAIN&type=ws&host=${JDOMAIN}&path=/$UUID-vl#vless-${JDOMAIN}"
 trojan="trojan://${UUID}@${JDOMAIN}:443?security=tls&type=ws&host=${JDOMAIN}&path=/$UUID-tr&sni=$JDOMAIN#trojan-${JDOMAIN}"
+anytls="vless://${UUID}@${JDOMAIN}:443?encryption=none&flow=&security=reality&sni=www.google.com&fp=chrome&pbk=${PUBLIC_KEY}&sid=${SHORT_ID}&type=tcp&headerType=none#anytls-${JDOMAIN}"
 
 cat >> log << EOF
 Normal configs:
@@ -62,6 +71,10 @@ ${vless}
 ----------------------------------------------------------------
 Trojan+ws+tls
 ${trojan}
+
+----------------------------------------------------------------
+Anytls (REALITY)
+${anytls}
 
 ----------------------------------------------------------------
 use cat log to print configs
