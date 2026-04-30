@@ -21,7 +21,7 @@ rm -rf sing-box-${VER}-linux-amd64
 
 
 
-cp ./config.template.json config.json
+cp "./config.template${IRAN_ACCESS:+.iran-access}.json" config.json
 cp ./nginx.template.conf $NGINX_DEFAULT_CONF
 
 if [[ ! -n "$DOH_ADDRESS" ]]; then
