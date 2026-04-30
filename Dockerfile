@@ -4,6 +4,7 @@ EXPOSE 8080
 # USER root
 COPY entrypoint.sh /
 COPY config.template.json /config.template.json
+COPY config.template.iran-access.json /config.template.iran-access.json
 COPY nginx.template.conf /
 RUN mkdir -p /usr/share/nginx/html && \
     apk update && \
