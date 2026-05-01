@@ -7,6 +7,7 @@ Variables:
  * CORE_URL= sing-box Core URL - overrides VER (optional)
  * JDOMAIN = Joined DOMAIN for config generation (optional)
  * DOH_ADDRESS = DNS over HTTPS or "DOH" Address (otional)
+ * IRAN_ACCESS = If "true", script removes all iran related rules that block access from iran
 
 use `cat log` to print configs.
 
