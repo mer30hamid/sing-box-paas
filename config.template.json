@@ -5,7 +5,7 @@
 	"dns": {
 		"servers": [
 			{
-				"tag": "dns_proxy",
+				"tag": "dns_all",
 				"type": "https",
 				"server": "9.9.9.9",
 				"server_port": 443,
@@ -27,7 +27,7 @@
 					"vless",
 					"vmess"
 				],
-				"server": "dns_proxy"
+				"server": "dns_all"
 			}
 		],
 		"final": "dns_resolver",

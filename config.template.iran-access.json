@@ -5,19 +5,14 @@
 	"dns": {
 		"servers": [
 			{
-				"tag": "dns_proxy",
-				"type": "https",
-				"server": "9.9.9.9",
-				"server_port": 443,
-				"tls": {
-					"enabled": true,
-					"server_name": "dns.quad9.net"
-				}
+				"tag": "dns_all",
+				"type": "udp",
+				"server": "IRAN_DNS_ALL"
 			},
 			{
 				"tag": "dns_resolver",
 				"type": "udp",
-				"server": "223.5.5.5"
+				"server": "IRAN_DNS_RESOLVER"
 			}
 		],
 		"rules": [
@@ -27,7 +22,7 @@
 					"vless",
 					"vmess"
 				],
-				"server": "dns_proxy"
+				"server": "dns_all"
 			}
 		],
 		"final": "dns_resolver",

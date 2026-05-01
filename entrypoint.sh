@@ -24,12 +24,17 @@ rm -rf sing-box-${VER}-linux-amd64
 cp "./config.template${IRAN_ACCESS:+.iran-access}.json" config.json
 cp ./nginx.template.conf $NGINX_DEFAULT_CONF
 
-if [[ ! -n "$DOH_ADDRESS" ]]; then
-  DOH_ADDRESS="https://9.9.9.9/dns-query"
+if [[ ! -n "$IRAN_DNS_ALL" ]]; then
+  IRAN_DNS_ALL="217.218.127.127"
+fi
+
+if [[ ! -n "$IRAN_DNS_RESOLVER" ]]; then
+  IRAN_DNS_RESOLVER="217.218.155.155"
 fi
 
 sed -i "s/UUID/$UUID/g" config.json
-sed -i "s~DOH_ADDRESS~$DOH_ADDRESS~g" config.json
+sed -i "s~IRAN_DNS_ALL~$IRAN_DNS_ALL~g" config.json
+sed -i "s~IRAN_DNS_RESOLVER~$IRAN_DNS_RESOLVER~g" config.json
 sed -i "s/UUID/$UUID/g" $NGINX_DEFAULT_CONF
 
 if [[ ! -n "$JDOMAIN" ]]; then
