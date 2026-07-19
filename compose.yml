@@ -1,0 +1,19 @@
+services:
+  sing-box-paas:
+    # build:
+    #   context: https://github.com/mer30hamid/sing-box-paas.git
+    image: mer30hamid/sing-box-paas
+    container_name: sing-box-paas
+    restart: unless-stopped
+
+    ports:
+      - "8080:8080"
+
+    environment:
+      UUID: "PUT-YOUR-UUID-HERE"
+      # VER: "1.12.19"
+      # CORE_URL: "https://example.com/sing-box-linux-amd64.tar.gz"
+      # JDOMAIN: "example.com"
+      # IRAN_ACCESS: "true"
+      # IRAN_DNS_RESOLVER: "178.22.122.100"
+      # IRAN_DNS_ALL: "178.22.122.100"
